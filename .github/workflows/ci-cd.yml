@@ -75,16 +75,16 @@ jobs:
             docker stop ${{ env.APP_NAME }} || true
             docker rm ${{ env.APP_NAME }} || true
             
-            # Verify .env file exists
-            if [ ! -f /home/ec2-user/.env ]; then
-              echo "Error: .env file not found at /home/ec2-user/.env"
+            # Verify .env.back file exists
+            if [ ! -f /home/ec2-user/.env.back ]; then
+              echo "Error: .env.back file not found at /home/ec2-user/.env.back"
               exit 1
             fi
             
             # Run the new container
             echo "Starting new container..."
             docker run --name ${{ env.APP_NAME }} \
-              --env-file /home/ec2-user/.env \
+              --env-file /home/ec2-user/.env.back \
               -d \
               -p 80:3001 \
               ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APP_NAME }}:latest || {
