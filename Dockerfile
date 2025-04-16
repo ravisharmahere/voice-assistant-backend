@@ -1,25 +1,34 @@
-# Stage 1: Build
-FROM python:3.11-slim AS builder
+# Use an official Python runtime as a parent image
+FROM python:3.11-slim
+
+# Set the working directory in the container
 WORKDIR /app
 
-# Install build dependencies
-COPY requirements.txt .
-RUN pip install --user --no-cache-dir -r requirements.txt
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    HF_HOME=/app/models
 
-# Copy application code
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements file
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Create models directory
+RUN mkdir -p /app/models
+
+# Copy the rest of the application code
 COPY . .
 
-# Stage 2: Runtime
-FROM python:3.11-slim
-WORKDIR /app
-
-# Copy installed packages from builder
-COPY --from=builder /root/.local /root/.local
-COPY --from=builder /app .
-
-# Set PATH
-ENV PATH=/root/.local/bin:$PATH
-
-# Expose port and define default command
+# Expose the port your app runs on
 EXPOSE 3001
+
+# Command to run the application
 CMD ["python", "agent.py", "start"]
