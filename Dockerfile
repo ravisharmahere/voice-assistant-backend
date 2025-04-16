@@ -1,40 +1,25 @@
-# Use an official Python runtime as a parent image
-FROM python:3.11-slim
-
-# Set the working directory in the container
+# Stage 1: Build
+FROM python:3.11-slim AS builder
 WORKDIR /app
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
-    HF_HOME=/app/models
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy requirements file
+# Install build dependencies
 COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Install PyTorch
-RUN pip install torch
-
-# Create models directory
-RUN mkdir -p /app/models
-
-# Copy the rest of the application code
+# Copy application code
 COPY . .
 
-# Download models during build
-RUN python agent.py download-files
+# Stage 2: Runtime
+FROM python:3.11-slim
+WORKDIR /app
 
-# Expose the port your app runs on
+# Copy installed packages from builder
+COPY --from=builder /root/.local /root/.local
+COPY --from=builder /app .
+
+# Set PATH
+ENV PATH=/root/.local/bin:$PATH
+
+# Expose port and define default command
 EXPOSE 3001
-
-# Command to run the application
 CMD ["python", "agent.py", "start"]
