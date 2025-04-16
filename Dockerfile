@@ -21,6 +21,9 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Install PyTorch
+RUN pip install torch
+
 # Create models directory
 RUN mkdir -p /app/models
 
