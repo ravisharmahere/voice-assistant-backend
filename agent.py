@@ -1,10 +1,10 @@
 from dotenv import load_dotenv
 from livekit import agents
 from livekit.agents import AgentSession, Agent, RoomInputOptions
-from livekit.plugins import openai, cartesia, deepgram, noise_cancellation, silero
+from livekit.plugins import openai, cartesia, deepgram, silero, noise_cancellation
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
-load_dotenv()
+load_dotenv(dotenv_path='.env')
 
 class Assistant(Agent):
     def __init__(self) -> None:
