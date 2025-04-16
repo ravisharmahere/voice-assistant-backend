@@ -3,7 +3,7 @@ from livekit import agents
 from livekit.agents import AgentSession, Agent, RoomInputOptions
 from livekit.plugins import openai, cartesia, deepgram, noise_cancellation, silero
 
-load_dotenv(dotenv_path='.env')
+load_dotenv()
 
 class Assistant(Agent):
     def __init__(self) -> None:
@@ -18,14 +18,14 @@ async def entrypoint(ctx: agents.JobContext):
         tts=cartesia.TTS(),
         vad=silero.VAD.load(),
         turn_detection="vad",
-        room_input_options=RoomInputOptions(
-            noise_cancellation=noise_cancellation.BVC(),
-        ),
     )
 
     await session.start(
         room=ctx.room,
         agent=Assistant(),
+        room_input_options=RoomInputOptions(
+            noise_cancellation=noise_cancellation.BVC(),
+        ),
     )
 
     await session.generate_reply(
