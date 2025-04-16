@@ -76,7 +76,7 @@ jobs:
               --env-file /home/ec2-user/.env.back \
               -v ~/models:/app/models \
               -d \
-              -p 80:3001 \
+              -p 80:3000 \
               ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APP_NAME }}:latest || {
                 echo "Failed to start container"
                 exit 1

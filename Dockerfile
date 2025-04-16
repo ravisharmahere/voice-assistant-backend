@@ -28,7 +28,7 @@ RUN mkdir -p /app/models
 COPY . .
 
 # Expose the port your app runs on
-EXPOSE 3001
+EXPOSE 3000
 
 # Command to run the application
 CMD ["python", "agent.py", "start"]
