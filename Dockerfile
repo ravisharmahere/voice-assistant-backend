@@ -7,7 +7,8 @@ WORKDIR /app
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
+    PIP_NO_CACHE_DIR=1 \
+    HF_HOME=/app/models
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -20,11 +21,17 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Create models directory
+RUN mkdir -p /app/models
+
 # Copy the rest of the application code
 COPY . .
+
+# Download models during build
+RUN python agent.py download-files
 
 # Expose the port your app runs on
 EXPOSE 3001
 
 # Command to run the application
-CMD ["python", "agent.py"]
+CMD ["python", "agent.py", "start"]
