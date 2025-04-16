@@ -21,7 +21,7 @@ from livekit.plugins import (
 )
 
 
-load_dotenv(dotenv_path=".env.local")
+load_dotenv(dotenv_path=".env")
 logger = logging.getLogger("voice-agent")
 
 
